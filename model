@@ -1,0 +1,78 @@
+from google.colab import drive
+drive.mount('/content/drive')
+
+
+
+!pip install tensorflow_addons contractions emoji ekphrasis --quiet
+
+
+
+import tensorflow as tf
+import keras
+
+from keras import Model, Sequential
+from keras.layers import Embedding, TextVectorization, Input, LSTM, Bidirectional, Dropout, Dense, SpatialDropout1D, Attention, Conv1D, MaxPooling1D, Add, Flatten, Reshape, GRU
+import keras.backend as K
+from keras.losses import Loss
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
+from keras.models import load_model
+from keras.initializers import Constant
+from keras.regularizers import l2
+from keras.metrics import Mean
+
+from tensorflow.keras.losses import SparseCategoricalCrossentropy, Reduction
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.optimizers import Adam
+
+import tensorflow_addons as tfa
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report, f1_score
+import numpy as np
+import re
+from dataclasses import dataclass
+
+import contractions, emoji
+
+from ekphrasis.classes.preprocessor import TextPreProcessor
+from ekphrasis.classes.tokenizer import SocialTokenizer
+from ekphrasis.dicts.emoticons import emoticons
+
+
+
+
+
+pd.set_option('display.max_colwidth', None)
+
+
+
+
+
+df_train_raw = pd.read_csv('./test_ekmann.csv')
+df_val_raw = pd.read_csv('./val_ekmann.csv')
+df_test_raw = pd.read_csv('./test_ekmann.csv')
+
+
+
+df_train_raw.rename(columns = {"Text": "text", "Emotion": "emotion", "Id": "id"}, inplace=True)
+df_val_raw.rename(columns = {"Text": "text", "Emotion": "emotion", "Id": "id"}, inplace=True)
+df_test_raw.rename(columns = {"Text": "text", "Emotion": "emotion", "Id": "id"}, inplace=True)
+     
+     
+     
+     
+ df_train_raw.head()
+ 
+ 
+ 
+ df_train_raw.emotion.value_counts().plot(kind="pie", figsize=(7, 7), title="Training dataset emotion distribution");
+     
+
+
+
+
+
+
+
+
