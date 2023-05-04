@@ -67,7 +67,121 @@ df_test_raw.rename(columns = {"Text": "text", "Emotion": "emotion", "Id": "id"},
  
  
  df_train_raw.emotion.value_counts().plot(kind="pie", figsize=(7, 7), title="Training dataset emotion distribution");
-     
+ 
+ 
+ 
+ train_count = df_train_raw.emotion.value_counts(normalize=True)
+val_count = df_val_raw.emotion.value_counts(normalize=True)
+test_count = df_test_raw.emotion.value_counts(normalize=True)
+
+print("--- Distribution of Emotion in the train set ---")
+print(train_count)
+
+print("\n--- Distribution of Emotion in the validation set ---")
+print(val_count)
+
+print("\n--- Distribution of Emotion in the test set ---")
+print(test_count)
+
+
+
+
+
+
+id_labels = {'joy': 0, 'neutral': 1, 'surprise': 2, 'anger': 3, 'sadness': 4, 'disgust': 5, 'fear': 6}
+
+df_train_raw.emotion.replace(id_labels, inplace=True)
+df_val_raw.emotion.replace(id_labels, inplace=True)
+df_test_raw.emotion.replace(id_labels, inplace=True)
+
+
+
+
+
+df_train_raw.count
+
+
+
+
+
+
+
+
+
+
+
+df_train_raw.iloc[4021].text
+
+
+
+
+
+
+
+
+
+
+print(f"Example of an uppercase message: {df_train_raw.iloc[62].text}\n")
+print(f"Example of a message with emojis: {df_train_raw.iloc[425].text}\n")
+print(f"Example of an elongated message: {df_train_raw.iloc[4021].text}\n")
+print(f"Example of a message with a contracted form: {df_train_raw.iloc[992].text}")
+
+
+
+
+
+
+# the "id" column is not relevant for the task
+def drop_irrelevant_column(df_pre, cols=["id"]):
+    return df_pre.drop(cols, axis=1)
+
+# lowerize the text column of datasets
+def lowerize(df_pre):
+    df_pre.text = df_pre.text.str.lower()
+    return df_pre
+
+def remove_punctuations(df_pre):
+    # df_pre.text = df_pre.text.replace('|'.join([re.escape(c) for c in list("!#$%&'()*+,-./:;<=>?@\^_`{|}~")]), 
+    #                                   "", 
+    #                                   regex=True)
+    df_pre.text = df_pre.text.replace('|'.join([re.escape(c) for c in list("#$%&*/:\^_{|}~")]), 
+                                      "", 
+                                      regex=True)
+    return df_pre
+
+def convert_emojis(df_pre):
+    df_pre.text = df_pre.text.apply(lambda x: emoji.demojize(x))
+    return df_pre
+
+# removed contractions
+def split_contractions(df_pre):
+    df_pre.text = df_pre.text.apply(contractions.fix)
+    return df_pre
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+text_processor = TextPreProcessor(
+    normalize= ['money', 'user', 'time', 'date', 'number', 'phone'],
+    annotate={"elongated", "repeated", 'emphasis', 'censored'},
+    fix_html=True,
+    tokenizer=SocialTokenizer(lowercase=True).tokenize,
+    segmenter="twitter", 
+    corrector="twitter", 
+    unpack_contractions=False,
+    spell_correct_elong=True,
+    spell_correction=True,
+    fix_text=True,    
+    dicts=[emoticons]
+)
+    
 
 
 
